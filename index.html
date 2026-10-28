@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A Little Wish for You | 19</title>
+<title>FOR SILVI | 19</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
 :root {
@@ -107,7 +107,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 28px #718bd066}
   </section>
 
   <article class="letter" id="letter">
-    <h2>Untuk Akane &amp; Silvi, di usia 19</h2>
+    <h2>Untuk Akane &amp; Silvi, di usia 19 tahun </h2>
     <p>Selamat ulang tahun.</p>
     <p>Untuk perempuan yang berani menentukan jalannya sendiri, yang belajar berdiri di atas kakinya sendiri, dan terus melangkah meski tak semua hal berjalan mudah.</p>
     <p>Semoga kamu selalu punya keberanian untuk mengejar hal-hal yang kamu impikan, keteguhan untuk menjaga pilihanmu, dan kebijaksanaan untuk tahu kapan harus berhenti sejenak.</p>
@@ -177,6 +177,31 @@ envelope.addEventListener('click',openLetter);
 envelope.addEventListener('keydown',e=>{
   if(e.key==='Enter'||e.key===' '){e.preventDefault();openLetter();}
 });
+</script>
+<!-- Musik latar: upload birthday.mp3 ke folder yang sama dengan index.html -->
+<audio id="bgMusic" preload="auto" loop>
+  <source src="./birthday.mp3" type="audio/mpeg">
+</audio>
+<script>
+(() => {
+  const music = document.getElementById('bgMusic');
+  if (!music) return;
+  music.volume = 1,5;
+
+  const tryPlayMusic = () => {
+    music.play().then(() => {
+      document.removeEventListener('pointerdown', tryPlayMusic);
+      document.removeEventListener('keydown', tryPlayMusic);
+    }).catch(() => {
+      // Autoplay dengan suara mungkin diblokir browser. Coba lagi saat interaksi berikutnya.
+    });
+  };
+
+  // Coba mulai otomatis; jika diblokir, mulai setelah interaksi pertama pengunjung.
+  tryPlayMusic();
+  document.addEventListener('pointerdown', tryPlayMusic);
+  document.addEventListener('keydown', tryPlayMusic);
+})();
 </script>
 </body>
 </html>
