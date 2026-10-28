@@ -178,7 +178,7 @@ envelope.addEventListener('keydown',e=>{
   if(e.key==='Enter'||e.key===' '){e.preventDefault();openLetter();}
 });
 </script>
-<!-- Musik latar: upload birthday.mp3 ke folder yang sama dengan index.html -->
+<!-- Musik latar: birthday.mp3 harus berada satu folder dengan index.html -->
 <audio id="bgMusic" preload="auto" loop>
   <source src="./birthday.mp3" type="audio/mpeg">
 </audio>
@@ -186,21 +186,36 @@ envelope.addEventListener('keydown',e=>{
 (() => {
   const music = document.getElementById('bgMusic');
   if (!music) return;
+
+  // Volume 35% agar nyaman didengar.
   music.volume = 1,5;
 
-  const tryPlayMusic = () => {
-    music.play().then(() => {
-      document.removeEventListener('pointerdown', tryPlayMusic);
-      document.removeEventListener('keydown', tryPlayMusic);
-    }).catch(() => {
-      // Autoplay dengan suara mungkin diblokir browser. Coba lagi saat interaksi berikutnya.
-    });
-  };
+  let playRequested = false;
+  function startMusic() {
+    if (!music.paused || playRequested) return;
+    playRequested = true;
+    const attempt = music.play();
+    if (attempt && typeof attempt.then === 'function') {
+      attempt.then(() => {
+        document.removeEventListener('pointerdown', startMusic);
+        document.removeEventListener('keydown', startMusic);
+      }).catch(() => {
+        playRequested = false;
+      });
+    } else {
+      playRequested = false;
+    }
+  }
 
-  // Coba mulai otomatis; jika diblokir, mulai setelah interaksi pertama pengunjung.
-  tryPlayMusic();
-  document.addEventListener('pointerdown', tryPlayMusic);
-  document.addEventListener('keydown', tryPlayMusic);
+  // Coba autoplay saat halaman dibuka. Jika diblokir, satu sentuhan pertama
+  // akan mencoba menyalakan musik tanpa perlu tombol musik terpisah.
+  startMusic();
+  document.addEventListener('pointerdown', startMusic);
+  document.addEventListener('keydown', startMusic);
+
+  // Ketukan pada tombol lilin juga langsung menjadi kesempatan memulai musik.
+  const blowButton = document.getElementById('blowButton');
+  if (blowButton) blowButton.addEventListener('click', startMusic);
 })();
 </script>
 </body>
